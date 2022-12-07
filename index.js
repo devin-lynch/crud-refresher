@@ -9,12 +9,8 @@ const fs = require('fs')
 const PORT = 3002
 app.set('view engine', 'ejs')
 app.use(ejsLayouts)
-// tell express to listen for request bodies sent from HTML forms
+// body parser middleware -- tell express to listen for request bodies sent from HTML forms
 app.use(express.urlencoded({ extended: false }))
-
-// middleware
-// app.use('/dinosaurs', require('./controllers/dinosaurs'))
-// app.use('/prehistoric', require('./controllers/prehistoric_creatures'))
 
 
 app.get('/', (req, res) => {
@@ -47,6 +43,20 @@ app.get('/dinosaurs/:idx', (req, res) => {
     res.render('dinosaurs/show', {myDino: dinoData[dinoIndex]})
 })
 
+app.post('/dinosaurs', (req, res) => {
+    // read dinosaurs file
+    let dinosaurs = fs.readFileSync('./dinosaurs.json')
+    let dinoData = JSON.parse(dinosaurs)
+
+    // add item to dinosaurs array
+    dinoData.push(req.body)
+
+    // save dinosaurs to the data.json file
+    fs.writeFileSync('./dinosaurs.json', JSON.stringify(dinoData))
+
+    // redirect to the GET /dinosaurs route (index)
+    res.redirect('/dinosaurs')
+})
 
 
 // listen on port
