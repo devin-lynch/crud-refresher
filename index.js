@@ -20,7 +20,13 @@ app.get('/', (req, res) => {
 app.get('/dinosaurs', (req, res) => {
     let dinosaurs = fs.readFileSync('./dinosaurs.json');
     let dinoData = JSON.parse(dinosaurs)
-    console.log(dinoData)
+    // console.log(dinoData)
+    let nameFilter = req.query.nameFilter;
+
+    if (nameFilter) {
+        dinoData = dinoData.filter(dino => dino.name.toLowerCase() === nameFilter.toLowerCase())
+    }
+
     res.render('dinosaurs/index', {myDinos: dinoData})
 })
 
